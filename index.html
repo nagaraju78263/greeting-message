@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #cfcfe8;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  /* Envelope scales with screen */
+  .envelope {
+    position: relative;
+    width: min(90vw, 320px);
+    height: min(55vw, 200px);
+    background: #e1a4e0;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    cursor: pointer;
+    animation: popIn 0.8s ease-out;
+  }
+
+  /* Flap */
+  .flap {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 50%;
+    background: #e1a4e0;
+    border-radius: 12px 12px 0 0;
+    transform-origin: top;
+    transition: transform 1s ease;
+    z-index: 3;
+  }
+
+  /* Letter */
+  .letter {
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    right: 5%;
+    bottom: 5%;
+    background: white;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s ease;
+    z-index: 1;
+
+    overflow-y: auto;
+  }
+
+  .header {
+    color: rgb(91, 158, 224);
+    font-weight: bold;
+    font-size: clamp(1rem, 5vw, 1.4rem);
+    margin-bottom: 10px;
+  }
+
+  .message {
+    color: rgb(223, 78, 78);
+    font-style: italic;
+    font-size: clamp(0.85rem, 4vw, 1.1rem);
+    line-height: 1.5;
+  }
+
+  /* Signature */
+  .signature {
+    margin-top: 12px;
+    color: rgb(8, 190, 240);
+    font-family: "Courier New", monospace;
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
+    opacity: 0;
+    transition: all 1.5s ease;
+    text-shadow: 0 0 0px transparent;
+  }
+
+  /* Open animation */
+  .open .flap {
+    transform: rotateX(180deg);
+  }
+
+  .open .letter {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .open .signature {
+    opacity: 1;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+    to {
+      text-shadow: 0 0 12px rgba(0,0,0,0.6);
+    }
+  }
+
+  @keyframes popIn {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Prevent zoom/overflow issues on small phones */
+  @media (max-height: 600px) {
+    .envelope {
+      transform: scale(0.95);
+    }
+  }
+
+</style>
+</head>
+
+<body>
+
+<div class="envelope" onclick="openLetter(this)">
+  <div class="flap"></div>
+
+  <div class="letter">
+    <div class="header">Mrs. Grubbs</div>
+
+    <div class="message">
+      Huge thanks for the Gatorade and the arcade - that honestly made my day!<br><br>
+      Sorry this little thank-you is coming a bit late, but I still wanted you to know how thankful I am.<br><br>
+      You're the Best. 🌞
+    </div>
+
+    <div class="signature">------ Shanvith</div>
+  </div>
+</div>
+
+<script>
+history.pushState(null, null, location.href);
+
+window.addEventListener('popstate', function () {
+    history.pushState(null, null, location.href);
+});
+</script>
+<script>
+
+  function openLetter(el) {
+    el.classList.add("open");
+  }
+</script>
+
+
+</body>
+</html>

@@ -3,166 +3,353 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Message for Mrs. Grubbs</title>
 
 <style>
+  * {
+    box-sizing: border-box;
+  }
+
   body {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #cfcfe8;
+    background: radial-gradient(circle at top, #f3e5f5 0%, #cfcfe8 55%, #b8b7dc 100%);
     font-family: Arial, sans-serif;
     overflow: hidden;
+    padding: 16px;
   }
 
-  /* Envelope scales with screen */
+  .scene {
+    width: min(92vw, 430px);
+    text-align: center;
+  }
+
+  .hint {
+    color: #5b5b7a;
+    font-size: clamp(0.8rem, 3.4vw, 1rem);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: hintFade 1s ease forwards 0.6s;
+  }
+
   .envelope {
     position: relative;
-    width: min(90vw, 320px);
-    height: min(55vw, 200px);
+    width: min(92vw, 380px);
+    height: min(58vw, 245px);
+    max-height: 245px;
+    margin: 0 auto;
     background: #e1a4e0;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    cursor: pointer;
-    animation: popIn 0.8s ease-out;
+    border-radius: 16px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.24);
+    animation: popIn 0.8s ease-out, openEnvelope 1.1s ease forwards 1.1s;
+    transform-style: preserve-3d;
   }
 
-  /* Flap */
   .flap {
     position: absolute;
     top: 0;
+    left: 0;
     width: 100%;
-    height: 50%;
-    background: #e1a4e0;
-    border-radius: 12px 12px 0 0;
+    height: 52%;
+    background: #d98bd9;
+    border-radius: 16px 16px 0 0;
     transform-origin: top;
-    transition: transform 1s ease;
-    z-index: 3;
+    z-index: 5;
+    animation: flapOpen 1.1s ease forwards 1.1s;
   }
 
-  /* Letter */
+  .flap::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    margin: auto;
+    width: 0;
+    height: 0;
+    border-left: min(46vw, 190px) solid transparent;
+    border-right: min(46vw, 190px) solid transparent;
+    border-top: min(28vw, 115px) solid #d98bd9;
+  }
+
   .letter {
     position: absolute;
-    top: 10%;
     left: 5%;
     right: 5%;
-    bottom: 5%;
-    background: white;
-    border-radius: 10px;
-    padding: 12px;
+    top: 8%;
+    bottom: 6%;
+    background: rgba(255,255,255,0.96);
+    border-radius: 14px;
+    padding: clamp(12px, 4vw, 20px);
     text-align: center;
-
     opacity: 0;
-    transform: translateY(20px);
-    transition: all 1s ease;
-    z-index: 1;
-
+    transform: translateY(35px) scale(0.96);
+    z-index: 2;
     overflow-y: auto;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+    animation: letterAppear 1.2s ease forwards 2.05s;
   }
 
   .header {
     color: rgb(91, 158, 224);
     font-weight: bold;
-    font-size: clamp(1rem, 5vw, 1.4rem);
-    margin-bottom: 10px;
+    font-size: clamp(1.15rem, 6vw, 1.8rem);
+    margin-bottom: 12px;
   }
 
   .message {
     color: rgb(223, 78, 78);
     font-style: italic;
-    font-size: clamp(0.85rem, 4vw, 1.1rem);
+    font-size: clamp(0.9rem, 4.1vw, 1.14rem);
     line-height: 1.5;
   }
 
-  /* Signature */
-  .signature {
-    margin-top: 12px;
-    color: rgb(8, 190, 240);
-    font-family: "Courier New", monospace;
-    font-size: clamp(0.9rem, 4vw, 1.1rem);
+  .signature-wrap {
+    margin-top: 18px;
     opacity: 0;
-    transition: all 1.5s ease;
-    text-shadow: 0 0 0px transparent;
+    animation: signatureFade 0.8s ease forwards 4s;
   }
 
-  /* Open animation */
-  .open .flap {
-    transform: rotateX(180deg);
+  .signature-name {
+    font-family: "Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive;
+    font-size: clamp(2.3rem, 9vw, 3.4rem);
+    color: #08bef0;
+    text-shadow:
+      0 0 6px rgba(8,190,240,0.45),
+      0 0 16px rgba(8,190,240,0.35);
+    animation: signatureAppear 1.5s ease forwards, signatureGlow 2s ease-in-out infinite alternate;
   }
 
-  .open .letter {
-    opacity: 1;
-    transform: translateY(0);
+  .music-note {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.94);
+    color: #5f4b8b;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    display: block;
+    z-index: 20;
   }
 
-  .open .signature {
-    opacity: 1;
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-
-  @keyframes glow {
-    from {
-      text-shadow: 0 0 5px rgba(0,0,0,0.2);
-    }
-    to {
-      text-shadow: 0 0 12px rgba(0,0,0,0.6);
-    }
+  .music-note.hide {
+    display: none;
   }
 
   @keyframes popIn {
+    from { transform: scale(0.84); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes flapOpen {
+    from { transform: rotateX(0deg); }
+    to { transform: rotateX(178deg); }
+  }
+
+  @keyframes openEnvelope {
+    from { transform: translateY(0); }
+    to { transform: translateY(-6px); }
+  }
+
+  @keyframes letterAppear {
+    from { opacity: 0; transform: translateY(35px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes signatureFade {
+    to { opacity: 1; }
+  }
+
+  @keyframes signatureAppear {
+    from { opacity: 0; transform: scale(0.75); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes signatureGlow {
     from {
-      transform: scale(0.8);
-      opacity: 0;
+      text-shadow: 0 0 4px rgba(8,190,240,0.35);
     }
     to {
-      transform: scale(1);
-      opacity: 1;
+      text-shadow:
+        0 0 10px rgba(8,190,240,0.8),
+        0 0 22px rgba(8,190,240,0.45);
     }
   }
 
-  /* Prevent zoom/overflow issues on small phones */
-  @media (max-height: 600px) {
+  @keyframes hintFade {
+    to { opacity: 1; }
+  }
+
+  @media (max-height: 650px) {
+    body {
+      align-items: flex-start;
+      overflow-y: auto;
+    }
+
+    .scene {
+      margin-top: 18px;
+    }
+
     .envelope {
-      transform: scale(0.95);
+      height: 230px;
     }
   }
-
 </style>
 </head>
 
 <body>
 
-<div class="envelope" onclick="openLetter(this)">
-  <div class="flap"></div>
+<div class="scene">
+  <div class="hint">💌 A special note is opening...</div>
 
-  <div class="letter">
-    <div class="header">Mrs. Grubbs</div>
+  <div class="envelope" id="envelope">
+    <div class="flap"></div>
 
-    <div class="message">
-      Huge thanks for the Gatorade and the arcade - that honestly made my day!<br><br>
-      Sorry this little thank-you is coming a bit late, but I still wanted you to know how thankful I am.<br><br>
-      You're the Best. 🌞
+    <div class="letter">
+      <div class="header">Mrs. Grubbs 💐</div>
+
+      <div class="message">
+        💜 Thank you for your kindness and generosity. 💜<br><br>
+
+        🥤 The Gatorade and the arcade points 🎮 may have seemed like small things,
+        but they meant a lot to me and truly brightened my day. ☀️<br><br>
+
+        💌 I know this thank-you is a little late, but I didn't want to miss the
+        chance to let you know how much I appreciated your thoughtfulness.<br><br>
+
+        🌟 Thank you for being such an amazing teacher and for always making a
+        difference in the lives of your students. 🌟<br><br>
+
+        😊 You are truly appreciated! 😊
+      </div>
+
+      <div class="signature-wrap" aria-label="Signature from Shanvith">
+        <div class="signature-name">Shanvith</div>
+      </div>
     </div>
-
-    <div class="signature">------ Shanvith</div>
   </div>
 </div>
 
-<script>
-history.pushState(null, null, location.href);
+<button id="musicButton" class="music-note" onclick="startMusic()">🎵 Tap to play classical music</button>
 
-window.addEventListener('popstate', function () {
-    history.pushState(null, null, location.href);
-});
-</script>
 <script>
+  /*
+    Important:
+    Most mobile browsers block music from starting automatically.
+    This page tries autoplay first. If blocked, the button lets the user start it.
+  */
 
-  function openLetter(el) {
-    el.classList.add("open");
+  let audioContext;
+  let musicStarted = false;
+
+  function playClassicalMusic15Seconds() {
+    if (musicStarted) return;
+    musicStarted = true;
+
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    const melody = [
+      392.00, 440.00, 493.88, 523.25, 587.33, 523.25, 493.88, 440.00,
+      392.00, 440.00, 493.88, 659.25, 587.33, 523.25, 493.88, 440.00,
+      349.23, 392.00, 440.00, 493.88, 523.25, 493.88, 440.00, 392.00,
+      329.63, 349.23, 392.00, 440.00, 493.88, 440.00, 392.00, 349.23,
+      392.00, 493.88, 587.33, 659.25, 698.46, 659.25, 587.33, 523.25
+    ];
+
+    const startTime = audioContext.currentTime + 0.05;
+    const noteDuration = 0.375; // 40 notes x 0.375 = 15 seconds
+
+    melody.forEach((freq, index) => {
+      const t = startTime + index * noteDuration;
+
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(freq, t);
+
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.055, t + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + noteDuration - 0.03);
+
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+
+      osc.start(t);
+      osc.stop(t + noteDuration);
+    });
+
+    const harmony = [
+      196.00, 220.00, 246.94, 261.63, 293.66,
+      261.63, 246.94, 220.00, 196.00, 174.61
+    ];
+
+    harmony.forEach((freq, index) => {
+      const t = startTime + index * 1.5;
+
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, t);
+
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.030, t + 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 1.45);
+
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+
+      osc.start(t);
+      osc.stop(t + 1.5);
+    });
+
+    setTimeout(() => {
+      if (audioContext && audioContext.state !== "closed") {
+        audioContext.close();
+      }
+    }, 15500);
   }
-</script>
 
+  function startMusic() {
+    document.getElementById("musicButton").classList.add("hide");
+
+    try {
+      playClassicalMusic15Seconds();
+    } catch (e) {
+      console.log("Music could not start:", e);
+      document.getElementById("musicButton").classList.remove("hide");
+    }
+  }
+
+  // Desktop browsers may allow this. Mobile usually blocks it.
+  window.addEventListener("load", function () {
+    setTimeout(function () {
+      try {
+        playClassicalMusic15Seconds();
+        document.getElementById("musicButton").classList.add("hide");
+      } catch (e) {
+        document.getElementById("musicButton").classList.remove("hide");
+      }
+    }, 1400);
+  });
+
+  document.addEventListener("click", startMusic, { once: true });
+  document.addEventListener("touchstart", startMusic, { once: true });
+
+  history.pushState(null, null, location.href);
+  window.addEventListener("popstate", function () {
+    history.pushState(null, null, location.href);
+  });
+</script>
 
 </body>
 </html>
